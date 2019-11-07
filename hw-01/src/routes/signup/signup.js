@@ -1,5 +1,5 @@
-fs = require('fs');
-path = require('path');
+const fs = require('fs');
+const path = require('path');
 
   const signUpRoute = async(request, response) => {
 
@@ -26,11 +26,13 @@ path = require('path');
                throw err;
            }
 
+           const bodyResponse = {
+            status: "success",
+            user: JSON.parse(body)
+          };
+
            response.writeHead(201, {'Content-Type': 'application/json'});
-           response.write(`{
-            'status': 'success',
-            'user': ${body}
-           }`);
+           response.write(JSON.stringify(bodyResponse));
            response.end();
        });
 
