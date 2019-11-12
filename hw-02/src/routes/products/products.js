@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const allProducts = require('../../db/products/all-products.json');
+const querystring = require('querystring');
 
 const getId = url => {
     const lastIndex = url.lastIndexOf('/');
@@ -38,12 +39,14 @@ const productsRoute = (request, response) => {
 
         } else if(id.includes('?ids')){
 
-            const elementsIdFirst = id.indexOf("%27");
-            const elementsIdLast = id.lastIndexOf("%27");
+            const parsedQuerystringId = querystring.parse(id);
+            const parsedQuerystringIdValue = Object.values(parsedQuerystringId)[0];
+            const elementsIdFirst = parsedQuerystringIdValue.indexOf("'");
+            const elementsIdLast = parsedQuerystringIdValue.lastIndexOf("'");
 
             if (elementsIdFirst !== -1) {
 
-                const elementsString = id.slice(elementsIdFirst +3, elementsIdLast);
+                const elementsString = parsedQuerystringIdValue.slice(elementsIdFirst +1, elementsIdLast);
                 const elementsArr = elementsString.split(",");
   
                 elementsArr.map(element => {
@@ -60,11 +63,15 @@ const productsRoute = (request, response) => {
                 response.end();
             }
         } else if (id.includes('?category')){
-            const elementsIdFirst = id.indexOf("%22");
-            const elementsIdLast = id.lastIndexOf("%22");
-            if (elementsIdFirst !== -1) {
+        
+            const parsedQuerystringId = querystring.parse(id);
+            const parsedQuerystringIdValue = Object.values(parsedQuerystringId)[0];
+            const elementsIdFirst = parsedQuerystringIdValue.indexOf('"');
+            const elementsIdLast = parsedQuerystringIdValue.lastIndexOf('"');
 
-                const categoryName = id.slice(elementsIdFirst +3, elementsIdLast);
+            if (elementsIdFirst !== -1) {
+                
+                const categoryName = parsedQuerystringIdValue.slice(elementsIdFirst +1, elementsIdLast);
 
                 allProducts.filter(elem => {
                     if(elem.categories[0] === categoryName){
