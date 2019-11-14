@@ -3,99 +3,129 @@ const path = require('path');
 const url = require('url');
 const allProducts = require('../../db/products/all-products.json');
 const querystring = require('querystring');
+const mainRoute = require('../main/main');
 
 const getId = url => {
-    const lastIndex = url.lastIndexOf('/');
+	const lastIndex = url.lastIndexOf('/');
 
-    if (lastIndex !== -1) {
-      return url.slice(lastIndex +1);
-    }
-  };
+	if (lastIndex !== -1) {
+		return url.slice(lastIndex + 1);
+	}
+};
 
 const productsRoute = (request, response) => {
-    const filePath = path.join(__dirname, '../../', 'db/', 'products/all-products.json');
-    const parsedUrl = url.parse(request.url);
-    const id = getId(parsedUrl.path);
-    let bodyResponse;
-    let productsArr = [];
-    response.writeHead(200, {"Content-Type": "application/json"});
 
-        if (id === 'products'){
+	let bodyResponse;
+	let productsArr = [];
 
-        const readStream = fs.createReadStream(filePath);
-        readStream.pipe(response);
+	const filePath = path.join(__dirname, '../../', 'db/', 'products/all-products.json');
+	const parsedUrl = url.parse(request.url);
+	const id = getId(parsedUrl.path);
 
-    } else if (+id % 1 === 0){
+	const parsedQuerystringId = querystring.parse(id);
+	const parsedQuerystringIdValue = Object.values(parsedQuerystringId)[0];
 
-        const product = allProducts.find(elem => elem.id === +id);
-        productsArr.push(product);
-               bodyResponse = {
-                "status": "success", 
-                "products": productsArr
-               }
+	const singleQuotesStartIndex = parsedQuerystringIdValue.indexOf("'");
+	const singleQuotesFinishIndex = parsedQuerystringIdValue.lastIndexOf("'");
 
-            response.write(JSON.stringify(bodyResponse));
-            response.end();
+	const doubleQuotesStartIndex = parsedQuerystringIdValue.indexOf('"');
+	const doubleQuotesFinishIndex = parsedQuerystringIdValue.lastIndexOf('"');
 
-        } else if(id.includes('?ids')){
+	const elementsString = parsedQuerystringIdValue.slice(singleQuotesStartIndex + 1, singleQuotesFinishIndex);
+	const elementsArr = elementsString.split(",");
 
-            const parsedQuerystringId = querystring.parse(id);
-            const parsedQuerystringIdValue = Object.values(parsedQuerystringId)[0];
-            const elementsIdFirst = parsedQuerystringIdValue.indexOf("'");
-            const elementsIdLast = parsedQuerystringIdValue.lastIndexOf("'");
+	const categoryName = parsedQuerystringIdValue.slice(doubleQuotesStartIndex + 1, doubleQuotesFinishIndex);
 
-            if (elementsIdFirst !== -1) {
+	if (id === 'products') {
 
-                const elementsString = parsedQuerystringIdValue.slice(elementsIdFirst +1, elementsIdLast);
-                const elementsArr = elementsString.split(",");
-  
-                elementsArr.map(element => {
-                    const product = allProducts.find(elem => elem.id === +element);
-                    productsArr.push(product);
-                });
+		response.writeHead(200, {
+			"Content-Type": "application/json"
+		});
+		const readStream = fs.createReadStream(filePath);
+		readStream.pipe(response);
 
-                bodyResponse = {
-                    "status": "success",
-                    "products": productsArr
-                   };
+	} else if (+id % 1 === 0) {
 
-                response.write(JSON.stringify(bodyResponse));
-                response.end();
-            }
-        } else if (id.includes('?category')){
-        
-            const parsedQuerystringId = querystring.parse(id);
-            const parsedQuerystringIdValue = Object.values(parsedQuerystringId)[0];
-            const elementsIdFirst = parsedQuerystringIdValue.indexOf('"');
-            const elementsIdLast = parsedQuerystringIdValue.lastIndexOf('"');
+		const product = allProducts.find(elem => elem.id === +id);
 
-            if (elementsIdFirst !== -1) {
-                
-                const categoryName = parsedQuerystringIdValue.slice(elementsIdFirst +1, elementsIdLast);
+		if (product) {
+			productsArr.push(product);
+		}
 
-                allProducts.filter(elem => {
-                    if(elem.categories[0] === categoryName){
-                        productsArr.push(elem);
-                    }
-                });
+		if (productsArr.length > 0) {
+			bodyResponse = {
+				"status": "success",
+				"products": productsArr
+			};
+		} else {
+			bodyResponse = {
+				"status": "no products",
+				"products": []
+			};
+		}
 
-                if(productsArr.length > 0){
-                    bodyResponse = {
-                        "status": "success",
-                        "products": productsArr
-                       };
-                } else {
-                    bodyResponse = {
-                        "status": "no products",
-                        "products": []
-                       };
-                }
+		response.writeHead(200, {
+			"Content-Type": "application/json"
+		});
+		response.write(JSON.stringify(bodyResponse));
+		response.end();
 
-                response.write(JSON.stringify(bodyResponse));
-                response.end();
-            }
-        }
-    
+	} else if (id.includes('?ids')) {
+
+		elementsArr.forEach(element => {
+			const product = allProducts.find(elem => elem.id === +element);
+			if (product) {
+				productsArr.push(product);
+			}
+		});
+
+		if (productsArr.length > 0) {
+			bodyResponse = {
+				"status": "success",
+				"products": productsArr
+			};
+		} else {
+			bodyResponse = {
+				"status": "no products",
+				"products": []
+			};
+		}
+
+		response.writeHead(200, {
+			"Content-Type": "application/json"
+		});
+		response.write(JSON.stringify(bodyResponse));
+		response.end();
+
+	} else if (id.includes('?category')) {
+
+		allProducts.filter(elem => {
+			if (elem.categories[0] === categoryName) {
+				productsArr.push(elem);
+			}
+		});
+
+		if (productsArr.length > 0) {
+			bodyResponse = {
+				"status": "success",
+				"products": productsArr
+			};
+		} else {
+			bodyResponse = {
+				"status": "no products",
+				"products": []
+			};
+		}
+
+		response.writeHead(200, {
+			"Content-Type": "application/json"
+		});
+		response.write(JSON.stringify(bodyResponse));
+		response.end();
+
+	} else {
+		mainRoute(request, response);
+	}
 }
 
 module.exports = productsRoute;
