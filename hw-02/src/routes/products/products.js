@@ -44,7 +44,7 @@ const productsRoute = (request, response) => {
 		const readStream = fs.createReadStream(filePath);
 		readStream.pipe(response);
 
-	} else if (+id % 1 === 0) {
+	} else if (+id % 1 === 0) { 
 
 		const product = allProducts.find(elem => elem.id === +id);
 
