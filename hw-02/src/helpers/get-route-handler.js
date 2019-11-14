@@ -1,11 +1,9 @@
 const getIdFreeUrl = url => {
   const lastIndex = url.lastIndexOf('/');
   const idString = url.slice(lastIndex + 1);
-  const isProductUrl = "/products" && idString && lastIndex !== -1;
-  if (url.slice(0, lastIndex) === isProductUrl) {
+  
+  if (idString && lastIndex !== 0) {
     return url.slice(0, lastIndex);
-  } else if (url.slice(0, lastIndex) !== "/products") {
-    return url;
   }
   return '/products';
 };

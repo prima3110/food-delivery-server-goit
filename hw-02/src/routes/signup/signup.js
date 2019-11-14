@@ -10,11 +10,11 @@ const signUpRoute = async (request, response) => {
       body = body + data;
     });
 
-    const userName = JSON.parse(body);
+    const user = JSON.parse(body);
 
 
-    if (!userName.username || !userName.telephone || typeof (parseInt(userName.telephone)) !== "number" ||
-      !userName.password || !userName.email || !userName.email.includes('@')) {
+    if (!user.username || !user.telephone || typeof (parseInt(user.telephone)) !== "number" ||
+      !user.password || !user.email || !user.email.includes('@')) {
       response.writeHead(400, {
         "Content-Type": "text/plain"
       });
@@ -22,7 +22,7 @@ const signUpRoute = async (request, response) => {
       response.end();
     } else {
 
-      const filePath = path.join(__dirname, '../../', 'db/', 'users/', `${userName.username}.json`);
+      const filePath = path.join(__dirname, '../../', 'db/', 'users/', `${user.username}.json`);
       fs.writeFile(filePath, body, err => {
         if (err) {
           throw err;
