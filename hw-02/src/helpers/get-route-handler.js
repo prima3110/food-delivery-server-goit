@@ -1,11 +1,13 @@
 const getIdFreeUrl = url => {
-  const lastIndex = url.lastIndexOf('/');
-  const idString = url.slice(lastIndex + 1);
-  
-  if (idString && lastIndex !== 0) {
-    return url.slice(0, lastIndex);
+  const firstIndex = url.indexOf("/");
+  const lastIndex = url.lastIndexOf("/");
+
+  if (lastIndex === 0) {
+    return url;
   }
-  return '/products';
+
+  return url.slice(firstIndex, lastIndex);
+
 };
 
 const getRouteHandler = (routerConfig, url) => {
