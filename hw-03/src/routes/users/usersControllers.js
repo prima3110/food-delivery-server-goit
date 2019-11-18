@@ -42,7 +42,7 @@ const postUser = (req, res, next) => {
                 });
 
             } else {
-                let usersArr = [];
+                const usersArr = [];
                 usersArr.push(body);
                 fs.writeFile(filePath, JSON.stringify(usersArr), err => {
                     if (err) {

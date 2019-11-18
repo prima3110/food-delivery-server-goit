@@ -26,7 +26,7 @@ const postOrder = (req, res, next) => {
         }
       });
     } else {
-      let ordersArr = [];
+      const ordersArr = [];
       ordersArr.push(req.body);
       fs.writeFile(filePath, JSON.stringify(ordersArr), err => {
         if (err) {
