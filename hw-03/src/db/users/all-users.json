@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1574009698645,
+    "username": "Anna",
+    "telephone": "063 777 77 77",
+    "password": "12345",
+    "email": "anna@gmail.com"
+  },
+  {
+    "id": 1574009732193,
+    "username": "Oleg",
+    "telephone": "093 777 77 77",
+    "password": "54321",
+    "email": "oleg@gmail.com"
+  },
+  {
+    "id": 1574009843212,
+    "username": "Ira",
+    "telephone": "073 777 77 77",
+    "password": "54321",
+    "email": "ira@gmail.com"
+  },
+  {
+    "id": 1574023399322,
+    "username": "Viktor",
+    "telephone": "053 777 77 77",
+    "password": "12345",
+    "email": "viktor@gmail.com"
+  }
+]
