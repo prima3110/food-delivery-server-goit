@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const corsMiddleware = require('cors');
 const {
     port,
-    secretKey,
     databaseUrl
 } = require('./config');
 const connectToDB = require('./src/db/connect-db');

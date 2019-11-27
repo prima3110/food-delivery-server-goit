@@ -3,11 +3,12 @@ const bcrypt = require('bcrypt');
 
 const updateUserById = async (request, response) => {
   try {
+    const saltRounds = 10;
     const user = request.body;
     const id = request.params.id;
 
     if (user.password) {
-      user.password = await bcrypt.hash(user.password, 10);
+      user.password = await bcrypt.hash(user.password, saltRounds);
     }
 
     const updatedUser = await User.findOneAndUpdate({

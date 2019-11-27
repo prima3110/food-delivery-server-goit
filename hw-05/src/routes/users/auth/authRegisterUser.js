@@ -2,14 +2,15 @@ const User = require('../userSchema');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {
-  secretKey
+  secretKey,
+  expirationTokenTime
 } = require('../../../../config');
 
 
 const generateToken = paramsForTokenGeneration => {
 
   return jwt.sign(paramsForTokenGeneration, secretKey, {
-    expiresIn: 60 * 60 * 24
+    expiresIn: expirationTokenTime
   })
 };
 
